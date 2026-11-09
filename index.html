@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Management System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="brand">
+        <svg class="brand-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+        <h1>Library Management System</h1>
+      </div>
+      <p class="brand-subtitle">Fast, lightweight catalog and book circulation management</p>
+    </div>
+  </header>
+
+  <nav id="navbar">
+    <div class="nav-container">
+      <button type="button" class="nav-btn active" data-tab="dashboard">Dashboard</button>
+      <button type="button" class="nav-btn" data-tab="add-book">Add Book</button>
+      <button type="button" class="nav-btn" data-tab="all-books">All Books</button>
+      <button type="button" class="nav-btn" data-tab="search">Search</button>
+      <button type="button" class="nav-btn" data-tab="issue">Issue</button>
+      <button type="button" class="nav-btn" data-tab="return">Return</button>
+      <button type="button" class="nav-btn" data-tab="issued">Issued List</button>
+    </div>
+  </nav>
+
+  <main>
+    <div id="message" class="message hidden"></div>
+
+    <section id="dashboard" class="tab-section active">
+      <div class="section-header">
+        <h2>Dashboard</h2>
+        <p class="section-desc">Overview of library inventory, available copies, and active circulations.</p>
+      </div>
+      <div class="stats-container">
+        <div class="stat-card stat-titles">
+          <h3>Total Titles</h3>
+          <p><span id="stat-titles">0</span></p>
+        </div>
+        <div class="stat-card stat-copies">
+          <h3>Total Copies Available</h3>
+          <p><span id="stat-copies">0</span></p>
+        </div>
+        <div class="stat-card stat-issued">
+          <h3>Books Currently Issued</h3>
+          <p><span id="stat-issued">0</span></p>
+        </div>
+        <div class="stat-card stat-outofstock">
+          <h3>Titles Out of Stock</h3>
+          <p><span id="stat-outofstock">0</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="add-book" class="tab-section">
+      <div class="section-header">
+        <h2>Add New Book</h2>
+        <p class="section-desc">Add a new book title and initial copy count to the library inventory.</p>
+      </div>
+      <form id="add-book-form" class="clean-form">
+        <div class="form-group">
+          <label for="book-id">Book ID</label>
+          <input type="text" id="book-id" name="book-id" placeholder="e.g. B105" required>
+        </div>
+        <div class="form-group">
+          <label for="book-title">Book Title</label>
+          <input type="text" id="book-title" name="book-title" placeholder="e.g. Clean Code" required>
+        </div>
+        <div class="form-group">
+          <label for="book-author">Author</label>
+          <input type="text" id="book-author" name="book-author" placeholder="e.g. Robert C. Martin" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group form-col">
+            <label for="book-year">Publication Year</label>
+            <input type="number" id="book-year" name="book-year" min="1" placeholder="e.g. 2008" required>
+          </div>
+          <div class="form-group form-col">
+            <label for="book-copies">Available Copies</label>
+            <input type="number" id="book-copies" name="book-copies" min="0" placeholder="e.g. 5" required>
+          </div>
+        </div>
+        <button type="submit" id="add-book-btn" class="btn-primary">Add Book</button>
+      </form>
+    </section>
+
+    <section id="all-books" class="tab-section">
+      <div class="section-header">
+        <h2>All Books</h2>
+        <p class="section-desc">Complete catalog of all books recorded in the system.</p>
+      </div>
+      <div class="table-container">
+        <table id="books-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Author</th>
+              <th>Year</th>
+              <th>Available Copies</th>
+            </tr>
+          </thead>
+          <tbody id="books-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="search" class="tab-section">
+      <div class="section-header">
+        <h2>Search Books</h2>
+        <p class="section-desc">Find books by title or ID with live availability indicators.</p>
+      </div>
+      <div class="search-bar">
+        <label for="search-input" class="sr-only">Search by ID or Title</label>
+        <input type="text" id="search-input" placeholder="Type a Book ID or Title to search...">
+        <button type="button" id="search-btn" class="btn-primary">Search</button>
+      </div>
+      <div id="search-results">
+        <div class="table-container">
+          <table id="search-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Year</th>
+                <th>Available Copies</th>
+                <th>Availability</th>
+              </tr>
+            </thead>
+            <tbody id="search-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="issue" class="tab-section">
+      <div class="section-header">
+        <h2>Issue Book</h2>
+        <p class="section-desc">Assign a book copy to a student for checkout.</p>
+      </div>
+      <form id="issue-form" class="clean-form">
+        <div class="form-group">
+          <label for="issue-book-id">Book ID</label>
+          <input type="text" id="issue-book-id" name="issue-book-id" placeholder="e.g. B101" required>
+        </div>
+        <div class="form-group">
+          <label for="issue-student-id">Student ID</label>
+          <input type="text" id="issue-student-id" name="issue-student-id" placeholder="e.g. S2001" required>
+        </div>
+        <button type="submit" id="issue-btn" class="btn-primary">Issue Book</button>
+      </form>
+    </section>
+
+    <section id="return" class="tab-section">
+      <div class="section-header">
+        <h2>Return Book</h2>
+        <p class="section-desc">Check in a borrowed book and restore its available copy count.</p>
+      </div>
+      <form id="return-form" class="clean-form">
+        <div class="form-group">
+          <label for="return-book-id">Book ID</label>
+          <input type="text" id="return-book-id" name="return-book-id" placeholder="e.g. B101" required>
+        </div>
+        <div class="form-group">
+          <label for="return-student-id">Student ID</label>
+          <input type="text" id="return-student-id" name="return-student-id" placeholder="e.g. S2001" required>
+        </div>
+        <button type="submit" id="return-btn" class="btn-primary">Return Book</button>
+      </form>
+    </section>
+
+    <section id="issued" class="tab-section">
+      <div class="section-header">
+        <h2>Issued Books</h2>
+        <p class="section-desc">List of all books currently checked out by students.</p>
+      </div>
+      <div class="table-container">
+        <table id="issued-table">
+          <thead>
+            <tr>
+              <th>Book ID</th>
+              <th>Title</th>
+              <th>Student ID</th>
+              <th>Issue Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="issued-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Course Project &bull; Library Management System</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
